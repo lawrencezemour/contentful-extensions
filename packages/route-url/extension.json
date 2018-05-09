@@ -1,0 +1,7 @@
+{
+  "name": "Route URL",
+  "id": "route-url",
+  "fieldTypes": ["Symbol"],
+  "srcdoc": "./dist/index.html",
+  "sidebar": false
+}
