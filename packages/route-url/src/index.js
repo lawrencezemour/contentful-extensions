@@ -1,4 +1,4 @@
-import url from 'url';
+import formatUrl from './util/format-url';
 
 // When UI Extensions SDK is loaded the callback will be executed.
 window.contentfulExtension.init(initExtension);
@@ -41,7 +41,7 @@ function initExtension(extension) {
     inputEl.value = value || '';
   };
 
-  // Handle referenced field value changes.
+  // Handle slug field value changes.
   const handleSlugChange = async slug => {
     if (!slug) {
       clearUrl(fieldLocale);
@@ -65,14 +65,17 @@ function initExtension(extension) {
     updateUrl(domain, zone, slug)(fieldLocale);
   };
 
-  // Callback for changes of the current field value.
+  // Callbacks for changes of the url and slug field values.
   const detachUrlChangeHandler = field.onValueChanged(handleFieldChange);
   const detachSlugChangeHandler = slugField.onValueChanged(
     fieldLocale,
     handleSlugChange
   );
 
-  // Only run code to update all field values in the default extension instance.
+  // Contentful creates an instance of the extension for each locale.
+  // When the domain or zone references (not localized) change, the code
+  // to update all field values should only run once, in the instance of
+  // the default locale.
   if (fieldLocale !== locales.default) {
     // Handle DOM "onbeforeunload" event.
     window.addEventListener(
@@ -109,7 +112,7 @@ function initExtension(extension) {
     });
   };
 
-  // Callbacks for changes of the field values.
+  // Callbacks for changes of the referenced field values.
   const detachDomainChangeHandler = domainField.onValueChanged(
     handleLinkChange
   );
@@ -125,15 +128,4 @@ function initExtension(extension) {
       detachZoneChangeHandler
     ])
   );
-}
-
-function formatUrl(domain, zone, slug) {
-  if (!domain || !zone || !slug) {
-    return '';
-  }
-  return url.format({
-    protocol: 'https',
-    host: domain,
-    pathname: `${zone}${slug}/`
-  });
 }
