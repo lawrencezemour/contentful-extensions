@@ -1,19 +1,19 @@
 {
   "name": "route-url",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Route URL",
   "main": "dist/index.html",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "build": "gulp build",
     "dev": "gulp dev",
     "bundle": "gulp bundle",
-    "predeploy": "bundle",
-    "deploy": "contentful extension update --descriptor extension.json"
-  },
-  "dependencies": {
-    "contentful-ui-extensions-sdk": "^3.4.0"
+    "cf:create": "yarn bundle --production && contentful extension create --descriptor extension.json",
+    "cf:update": "yarn bundle --production && contentful extension update --descriptor extension.json",
+    "test": "yarn test:lint-js && yarn test:unit",
+    "test:lint-js": "eslint --cache --quiet packages/**/**/*.js",
+    "test:unit": "jest --coverage",
+    "test:unit:watch": "jest --watch"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -26,10 +26,17 @@
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-inline-source": "^3.1.0",
+    "gulp-noop": "^1.0.0",
     "gulp-sass": "^4.0.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
+    "jest": "^22.4.3",
+    "jest-cli": "^22.4.3",
     "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
+    "vinyl-source-stream": "^2.0.0",
+    "yargs": "^11.0.0"
+  },
+  "dependencies": {
+    "url": "^0.11.0"
   }
 }
