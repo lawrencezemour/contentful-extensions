@@ -14,5 +14,6 @@ export default function formatUrl(domain, zone, slug) {
 }
 
 export function removeLeadingSlash(string) {
-  return string[0] === '/' ? string.substr(1, string.length) : string;
+  const leadingSlashes = /^\/+/;
+  return string.replace(leadingSlashes, '');
 }

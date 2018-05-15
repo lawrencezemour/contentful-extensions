@@ -31,7 +31,7 @@ function initExtension(extension) {
     urlField.setValue('', locale);
   };
 
-  const updateUrl = (domain, zone, slug) => locale => {
+  const updateUrl = (domain, zone, slug, locale) => {
     const newUrl = formatUrl(domain, zone, slug);
     urlField.setValue(newUrl, locale);
   };
@@ -62,7 +62,7 @@ function initExtension(extension) {
 
     const domain = domainEntry.fields.production[fieldLocale];
     const zone = zoneEntry.fields.slug[fieldLocale];
-    updateUrl(domain, zone, slug)(fieldLocale);
+    updateUrl(domain, zone, slug, fieldLocale);
   };
 
   // Callbacks for changes of the url and slug field values.
@@ -108,7 +108,7 @@ function initExtension(extension) {
       const domain = domainEntry.fields.production[locale];
       const zone = zoneEntry.fields.slug[locale];
       const slug = slugField.getValue(locale);
-      updateUrl(domain, zone, slug)(locale);
+      updateUrl(domain, zone, slug, locale);
     });
   };
 
