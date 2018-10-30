@@ -5,5 +5,15 @@
     "Symbols"
   ],
   "srcdoc": "./dist/index.html",
-  "sidebar": false
+  "sidebar": false,
+  "parameters": {
+    "instance": [
+      {
+        "id": "helpText",
+        "type": "Symbol",
+        "name": "Help text",
+        "description": "This help text will show up below the field."
+      }
+    ]
+  }
 }
