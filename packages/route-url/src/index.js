@@ -13,12 +13,7 @@ function initExtension(extension) {
 
   const inputEl = document.getElementById('extension-input');
   const { field, entry, space, locales } = extension;
-  const {
-    domain: domainField,
-    zone: zoneField,
-    slug: slugField,
-    url: urlField
-  } = entry.fields;
+  const { zone: zoneField, slug: slugField, url: urlField } = entry.fields;
   const { locale: fieldLocale } = field;
 
   // Handle window unload.
@@ -48,20 +43,26 @@ function initExtension(extension) {
       return;
     }
 
-    const domainLink = domainField.getValue();
     const zoneLink = zoneField.getValue();
 
-    if (!domainLink || !zoneLink) {
+    if (!zoneLink) {
       return;
     }
 
     const [domainEntry, zoneEntry] = await Promise.all([
-      space.getEntry(domainLink.sys.id),
+      space.getEntries({
+        content_type: 'website',
+        include: 2
+      }),
       space.getEntry(zoneLink.sys.id)
     ]);
 
-    const domain = domainEntry.fields.production[fieldLocale];
+    const domain = domainEntry.items.find(
+      item => item.fields.siteLocale['en-US'] === fieldLocale
+    ).fields.domain['en-US'];
+
     const zone = zoneEntry.fields.slug[fieldLocale];
+
     updateUrl(domain, zone, slug, fieldLocale);
   };
 
@@ -85,47 +86,9 @@ function initExtension(extension) {
     return;
   }
 
-  // Handle referenced field value changes.
-  const handleLinkChange = async link => {
-    if (!link) {
-      locales.available.forEach(clearUrl);
-      return;
-    }
-
-    const domainLink = domainField.getValue();
-    const zoneLink = zoneField.getValue();
-
-    if (!domainLink || !zoneLink) {
-      return;
-    }
-
-    const [domainEntry, zoneEntry] = await Promise.all([
-      space.getEntry(domainLink.sys.id),
-      space.getEntry(zoneLink.sys.id)
-    ]);
-
-    locales.available.forEach(locale => {
-      const domain = domainEntry.fields.production[locale];
-      const zone = zoneEntry.fields.slug[locale];
-      const slug = slugField.getValue(locale);
-      updateUrl(domain, zone, slug, locale);
-    });
-  };
-
-  // Callbacks for changes of the referenced field values.
-  const detachDomainChangeHandler = domainField.onValueChanged(
-    handleLinkChange
-  );
-  const detachZoneChangeHandler = zoneField.onValueChanged(handleLinkChange);
-
   // Handle DOM "onbeforeunload" event.
   window.addEventListener(
     'onbeforeunload',
-    handleUnload([
-      detachUrlChangeHandler,
-      detachSlugChangeHandler,
-      detachDomainChangeHandler,
-      detachZoneChangeHandler
-    ])
+    handleUnload([detachUrlChangeHandler, detachSlugChangeHandler])
   );
 }
